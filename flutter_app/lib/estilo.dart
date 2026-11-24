@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-
-// Colores sencillos basados en el ambiente de FNAF 4.
 const fondo = Color(0xFF0B0707);
 const tarjeta = Color(0xFF3A0D0D);
 const rojo = Color(0xFFB71C1C);

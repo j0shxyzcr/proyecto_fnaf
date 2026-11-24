@@ -2,13 +2,11 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class Api {
-  // Chrome en Mac: localhost. Emulador Android: 10.0.2.2.
   static const url = String.fromEnvironment(
     'API_URL',
-    defaultValue: 'http://127.0.0.1:8000',
+    defaultValue: 'http://127.0.0.1:8001',
   );
 
-  // La sesión se guarda solo en memoria. Al cerrar la app se vuelve a iniciar sesión.
   static String token = '';
 
   static Future<dynamic> get(String ruta) async {
@@ -38,6 +36,36 @@ class Api {
       return _revisar(respuesta);
     } catch (e) {
       throw Exception('No se pudo conectar o guardar: $e');
+    }
+  }
+
+  static Future<dynamic> put(String ruta, Map<String, dynamic> datos) async {
+    try {
+      final respuesta = await http
+          .put(
+            Uri.parse('$url$ruta'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+            body: jsonEncode(datos),
+          )
+          .timeout(const Duration(seconds: 12));
+      return _revisar(respuesta);
+    } catch (e) {
+      throw Exception('No se pudo conectar o guardar: $e');
+    }
+  }
+
+  static Future<dynamic> delete(String ruta) async {
+    try {
+      final respuesta = await http.delete(
+        Uri.parse('$url$ruta'),
+        headers: {'Authorization': 'Bearer $token'},
+      ).timeout(const Duration(seconds: 12));
+      return _revisar(respuesta);
+    } catch (e) {
+      throw Exception('No se pudo conectar o eliminar: $e');
     }
   }
 

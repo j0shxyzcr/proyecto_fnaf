@@ -6,6 +6,7 @@ import 'inicio_page.dart';
 import 'datos_page.dart';
 import 'comunidad_page.dart';
 import 'tienda_page.dart';
+import 'admin_page.dart';
 
 void main() => runApp(const BlogFnaf());
 
@@ -18,6 +19,7 @@ class BlogFnaf extends StatefulWidget {
 
 class _BlogFnafState extends State<BlogFnaf> {
   String nombre = '';
+  bool esAdmin = false;
 
   @override
   Widget build(BuildContext context) {
@@ -39,12 +41,21 @@ class _BlogFnafState extends State<BlogFnaf> {
         ),
       ),
       home: nombre.isEmpty
-          ? LoginPage(alEntrar: (n) => setState(() => nombre = n))
+          ? LoginPage(
+              alEntrar: (n, admin) => setState(() {
+                nombre = n;
+                esAdmin = admin;
+              }),
+            )
           : PantallaPrincipal(
               nombre: nombre,
+              esAdmin: esAdmin,
               alSalir: () {
                 Api.token = '';
-                setState(() => nombre = '');
+                setState(() {
+                  nombre = '';
+                  esAdmin = false;
+                });
               },
             ),
     );
@@ -53,9 +64,13 @@ class _BlogFnafState extends State<BlogFnaf> {
 
 class PantallaPrincipal extends StatefulWidget {
   final String nombre;
+  final bool esAdmin;
   final VoidCallback alSalir;
   const PantallaPrincipal(
-      {super.key, required this.nombre, required this.alSalir});
+      {super.key,
+      required this.nombre,
+      this.esAdmin = false,
+      required this.alSalir});
 
   @override
   State<PantallaPrincipal> createState() => _PantallaPrincipalState();
@@ -78,6 +93,17 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
       appBar: AppBar(
         title: const Text('FNAF BLOG', style: TextStyle(color: Colors.white)),
         actions: [
+          if (widget.esAdmin)
+            IconButton(
+              tooltip: 'Panel de administración',
+              icon: const Icon(Icons.admin_panel_settings),
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (_) => const AdminPage(),
+                ),
+              ),
+            ),
           IconButton(
             tooltip: 'Cerrar sesión',
             icon: const Icon(Icons.logout),
@@ -85,7 +111,6 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
           ),
         ],
       ),
-      // IndexedStack conserva el carrito al cambiar de sección.
       body: IndexedStack(index: pagina, children: pantallas),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,

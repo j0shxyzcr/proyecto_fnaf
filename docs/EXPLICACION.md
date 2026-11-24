@@ -20,6 +20,7 @@ Flutter <--- JSON <--- FastAPI <--- MySQL local
 ## Tablas de la base de datos
 
 - `usuarios`: datos de cuenta y hash de contraseña.
+- `usuarios.es_admin`: distingue a quienes pueden entrar al panel de administración.
 - `lore`: textos para explicar la historia de FNAF.
 - `juegos`: información sobre juegos de la saga.
 - `videos`: episodios del vlog y enlaces de YouTube.
@@ -62,6 +63,17 @@ Api
 
 La contraseña no se almacena como texto, sino como un hash calculado por Argon2 en la API. Para entrar se usa un token JWT que dura dos horas. Solo usuarios que iniciaron sesión pueden publicar, comentar, reaccionar y hacer pedidos. El token se guarda temporalmente en memoria en Flutter y se borra al cerrar sesión o reiniciar la app. El archivo `.env` contiene las claves y no debe subirse a GitHub. Al trabajar en HTTP local, el proyecto NO es apto para internet público.
 
+## Preparar MySQL y el panel de administración
+
+1. Configura `backend/.env` con el usuario y contraseña de MySQL y un `JWT_SECRET` aleatorio de al menos 32 caracteres.
+2. Desde la raíz del proyecto, crea/carga la base y los datos de ejemplo: `mysql -u root -p < database/fnaf_blog.sql`.
+3. Inicia FastAPI desde la raíz con `backend/.venv/bin/uvicorn backend.main:app --reload --port 8001` (o activa el entorno virtual y ejecuta `uvicorn main:app --reload --port 8001` desde `backend/`).
+4. Si la base ya existía antes de esta actualización, desde la raíz ejecuta `backend/.venv/bin/python backend/configurar_admin.py --migrar` antes de abrir la app. En una base nueva, este paso ya está incluido en el SQL.
+5. Registra desde la app la cuenta que será administradora. Después, desde la raíz, ejecuta `backend/.venv/bin/python backend/configurar_admin.py correo@ejemplo.com`. Este comando promueve únicamente esa cuenta; no hay una contraseña administrativa predeterminada.
+6. Cierra sesión y vuelve a entrar. Las cuentas administradoras verán el botón de escudo en la barra superior. El servidor comprueba el rol en la base de datos en cada operación administrativa.
+
+El panel permite revisar métricas, gestionar lore/juegos/videos/productos, moderar publicaciones y consultar usuarios y pedidos de prueba. En Usuarios, un administrador también puede crear cuentas administradoras con contraseña almacenada mediante hash. Los pedidos siguen siendo simulados: no hay cobros ni gestión de pagos.
+
 ## Multimedia y sensores
 
 Usamos íconos de Flutter y emoji para las reacciones. Los videos, cuando estén disponibles, se abrirán mediante `url_launcher`. No usamos GPS, cámara ni sensores porque no son necesarios para el blog escolar.
@@ -95,5 +107,5 @@ Aprendimos a dividir un proyecto en tres partes: Flutter para las pantallas, Fas
 - El carrito registra pedidos de prueba: no procesa pagos.
 - Solo hay publicaciones de texto, no carga de fotos.
 - El contenido de FNAF está resumido y algunas teorías no son hechos confirmados.
-- No hay panel para administrar lore o productos desde Flutter; se editan en MySQL local.
-- Hay que probar todo en la Mac: esta entrega se creó sin ejecutar Flutter ni una base de datos MySQL real.
+- Los pedidos que aparecen en el panel son de prueba; no representan ventas ni pagos reales.
+- La app usa HTTP y una base MySQL local: no la publiques en internet sin configurar HTTPS, secretos y permisos para producción.

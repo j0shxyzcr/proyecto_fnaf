@@ -3,7 +3,7 @@ import 'api.dart';
 import 'estilo.dart';
 
 class LoginPage extends StatefulWidget {
-  final void Function(String) alEntrar;
+  final void Function(String, bool) alEntrar;
   const LoginPage({super.key, required this.alEntrar});
 
   @override
@@ -44,7 +44,15 @@ class _LoginPageState extends State<LoginPage> {
         'contrasena': contrasena.text,
       });
       Api.token = datos['token'].toString();
-      if (mounted) widget.alEntrar(datos['nombre'].toString());
+      final usuario = await Api.get('/yo');
+      final esAdmin =
+          usuario['es_admin'] == true || usuario['es_admin'] == 1;
+      if (mounted) {
+        widget.alEntrar(
+          datos['nombre'].toString(),
+          esAdmin,
+        );
+      }
     } catch (e) {
       if (mounted) aviso(context, errorTexto(e));
     } finally {
@@ -117,7 +125,7 @@ class _LoginPageState extends State<LoginPage> {
                       : '¿No tienes cuenta? Regístrate'),
                 ),
                 const SizedBox(height: 20),
-                const Text('Proyecto de estudiantes, no oficial.',
+                const Text('proyecto no oficial.',
                     style: TextStyle(color: Colors.white38, fontSize: 12)),
               ],
             ),

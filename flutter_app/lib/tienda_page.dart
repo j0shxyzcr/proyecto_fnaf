@@ -7,6 +7,7 @@ const _imagenesProductos = <int, String>{
   2: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcStzuXcMH_R7nmroBRHhCU_tn2uip0gShs_ly_NelrjWQ&s=10',
   3: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCe9D78bpbaH-hWTzPm8nTLcSHIDoaFMo3z6Nr2wWmXQ&s=10',
   4: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzsZcKcnp4fqYzobiV5j1tmQetK9fJ598K4iciD9r0tg&s=10',
+  5: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1g5k6r7j3J8q4n2XxW8vY0z5F1Zc6sG9K4i3L2mN5&s=10',
 };
 
 Widget _imagenProducto(int id) {
@@ -224,7 +225,6 @@ class _TiendaPageState extends State<TiendaPage> {
             return Center(child: Text(errorTexto(estado.error!)));
           }
           final lista = estado.data as List<dynamic>;
-          // datos para el carrito
           listaProductos = lista;
           return ListView(
               children: lista.map((dato) {

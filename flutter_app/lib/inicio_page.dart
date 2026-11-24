@@ -44,7 +44,7 @@ class _InicioPageState extends State<InicioPage> {
                 'un vlog bien chido para fans de Five Nights at Freddy\'s. asi bien rojito como el fnaf 4',
                 textAlign: TextAlign.center),
           ],
-    JUV    )),
+        )),
         const SizedBox(height: 15),
         const Text('NUESTRO VLOG',
             style: TextStyle(

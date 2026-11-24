@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'api.dart';
 import 'estilo.dart';
-
-// Esta pantalla se reutiliza para mostrar la historia y los juegos.
 class DatosPage extends StatefulWidget {
   final String titulo;
   final String ruta;

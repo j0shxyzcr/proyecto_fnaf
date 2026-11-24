@@ -73,7 +73,6 @@ class _ComunidadPageState extends State<ComunidadPage> {
         ],
       ),
     );
-    // En esta práctica basta con actualizar la lista después de crear un post.
     titulo.dispose();
     contenido.dispose();
     if (guardado == true && mounted) actualizar();
@@ -230,14 +229,21 @@ class _ComentariosPageState extends State<ComentariosPage> {
   final texto = TextEditingController();
   late Future<dynamic> comentarios;
 
+  Future<dynamic> obtenerComentarios() =>
+      Api.get('/publicaciones/${widget.publicacionId}/comentarios');
+
   @override
   void initState() {
     super.initState();
-    cargar();
+    comentarios = obtenerComentarios();
   }
 
-  void cargar() => setState(() => comentarios =
-      Api.get('/publicaciones/${widget.publicacionId}/comentarios'));
+  void cargar() {
+    final nuevaCarga = obtenerComentarios();
+    setState(() {
+      comentarios = nuevaCarga;
+    });
+  }
 
   @override
   void dispose() {
